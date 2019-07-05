@@ -13,23 +13,22 @@
 #endif
 
 
-int flagSerial=0, flagEcho=0, indice=0;
+int flagSerial=0, flagEnter=0, llenado=0, numero=5,contador=0;
 char caracter;
-
-#define Max_Size_Buffer 10
-char palabra[Max_Size_Buffer];
-
 
 #INT_RDA
 void isr_RDA(void){
-   palabra[indice]=getc();
-   indice++;
    flagSerial=1;
    caracter=getc();
-   if(indice>palabra){
-      indice=0;
+   if(contador<10){
+      palabra[contador]=caracter;
+      contador++;
    }
+   if(caracter==0x0D){
+      flagEnter=1;
+   } 
 }
+
 
 void main (void){
    set_tris_c(0x80);
@@ -38,11 +37,11 @@ void main (void){
    while(1){
    
       if(flagSerial==1){
-         for(int indiceRecorrido=0;indiceRecorrido<indice;indiceRecorrido++){
-            printf("%c",(palabra[indiceRecorrido]));
+         for(int repeticion=0;repeticion<numero;repeticion++){
             putc(caracter);
-         }  
+         }
+      }  
          flagSerial=0;
-      }
+      
    }
 }
